@@ -44,6 +44,9 @@ class ReactComponent:
     def unmount(self):
         return
 
+    def clean(self):
+        self.state_function.release()
+
     def render(self):
         object = Object.fromString('This is the default RPython render text, override render method to get started')
         component = ReactComponent()
@@ -67,7 +70,7 @@ class ReactComponent:
 
     def setState(self):
         #if self.state_function is None: return
-        self.state_function(JSON.fromDict({}))
+        self.state_function.call(JSON.fromDict({}))
 
     def toRef(self):
         #if isinstance(self, ReactComponent): return self.render().toRef()
