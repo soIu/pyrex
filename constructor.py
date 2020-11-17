@@ -54,7 +54,7 @@ class ReactComponent:
         return component
 
     def entry(self):
-        createElement = Object('window.React.createElement')
+        createElement = Object.get('window', 'React', 'createElement')
         if self.entry_function[0] is None:
             if self.component_object is not None: return self.component_object
             if self.component is None: return Object.fromString('This is the default RPython render text, override render method to get started')

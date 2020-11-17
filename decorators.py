@@ -74,26 +74,49 @@ def create_custom_component(Component, State):
            caches[id].unmount()
            caches[id].clean()
     @function
+    def use_state(state_function):
+        Date = Object.get('window', 'Date')
+        state_function.call(Date['now'].call().toRef())
+    @function
+    def use_effect(id, effect):
+        effect.call(id.toRef())
+    @function
+    def use_effect_cleanup(id):
+        return Object.createClosure(unmount, id.toRef())
+    @function
     def entry(props):
-        variable = "rpython_react_component_count_" + str(custom_component_count)
-        run_javascript("!('%s' in global) && (global.%s = -1)" % (variable, variable))
-        object = Object("window.React.useState(function() {return {step: 0, id: ++global.%s}}).map(function (value, index, values) {return typeof value !== 'function' ? value : function () {return value({...values[0], step: values[0].step + 1})}})" % (variable))
-        state, function = object['0'], object['1'].keep() #toFunction()
-        step, id = state['step'].toInteger(), state['id']
+        #variable = "rpython_react_component_count_" + str(custom_component_count)
+        #globals = Object.get('global')
+        #if globals[variable].type == 'undefined':
+        #   globals[variable] = JSON.fromInteger(-1)
+        #run_javascript("!('%s' in global) && (global.%s = -1)" % (variable, variable))
+        useState = Object.get('window', 'React', 'useState').toFunction()
+        state = useState(JSON.fromInteger(0))
+        function = Object.createClosure(use_state, state['1'].toRef()).keep()
+        #object = Object("window.React.useState(function() {return {step: 0, id: ++global.%s}}).map(function (value, index, values) {return typeof value !== 'function' ? value : function () {return value({...values[0], step: values[0].step + 1})}})" % (variable))
+        #state, function = object['0'], object['1'].keep() #toFunction()
+        #step, id = state['step'].toInteger(), state['id']
         #if functions.mount is None: functions.mount = JSON.fromFunction(mount)
         #if functions.update is None: functions.update = JSON.fromFunction(update)
         #if functions.unmount is None: functions.unmount = JSON.fromFunction(unmount)
+        step = state['0'].toInteger()
+        id = props['rpython_cache_id']
         if step == 0:
-           component = Component(children=Component.rpython_caches[props['rpython_cache_id'].toString()].children if props['rpython_cache_id'].type != 'undefined' else [], react_props=props)
+           component = Component(children=Component.rpython_caches[id.toString()].children if id.type != 'undefined' else [], react_props=props)
            caches[id.toInteger()] = component
         else:
            caches[id.toInteger()].state_function.release()
         #if 'mount' in functions and 'update' in functions and 'unmount' in functions:
-        effect = Object("function (effect, cleanup) {return function () {effect(%s)}}" % (id.toString())).call(JSON.fromFunction(mount) if step == 0 else JSON.fromFunction(update))
-        Object('window.React.useEffect').call(effect.toRef())
+        useEffect = Object.get('window', 'React', 'useEffect').toFunction()
+        effect = Object.createClosure(use_effect, id.toRef(), JSON.fromFunction(mount) if step == 0 else JSON.fromFunction(update))
+        #effect = Object("function (effect, cleanup) {return function () {effect(%s)}}" % (id.toString())).call(JSON.fromFunction(mount) if step == 0 else JSON.fromFunction(update))
+        #Object('window.React.useEffect').call(effect.toRef())
+        useEffect(effect.toRef())
         if step == 0:
-           cleanup = Object("function (cleanup) {return function () {return function () {cleanup(%s)}}}" % (id.toString())).call(JSON.fromFunction(unmount))
-           Object('window.React.useEffect').call(cleanup.toRef(), JSON.fromList([]))
+           cleanup = Object.createClosure(use_effect_cleanup, id.toRef())
+           #cleanup = Object("function (cleanup) {return function () {return function () {cleanup(%s)}}}" % (id.toString())).call(JSON.fromFunction(unmount))
+           #Object('window.React.useEffect').call(cleanup.toRef(), JSON.fromList([]))
+           useEffect(cleanup.toRef())
         component = caches[id.toInteger()]
         component.state_function = function
         return component.render().entry()
