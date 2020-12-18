@@ -58,6 +58,10 @@ class ReactComponent:
         if self.entry_function[0] is None:
             if self.component_object is not None: return self.component_object
             if self.component is None: return Object.fromString('This is the default RPython render text, override render method to get started')
+            if self.component.startswith('RPYJSON:') and self.component.endswith(':RPYJSON'):
+               path = JSON.parse_rpy_json(self.component)
+               component = Object(path).keep()
+               self.component = component.toRef()
             if self.children is None or not self.children: return createElement.call(self.component, JSON.fromDict(self.native_props))
             return createElement.call(self.component, JSON.fromDict(self.native_props), fromChildren(self.children, cache=False))
         #assert self.entry_function[0] is not None
