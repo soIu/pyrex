@@ -101,22 +101,25 @@ def create_custom_component(Component, State):
         #if functions.unmount is None: functions.unmount = JSON.fromFunction(unmount)
         step = state['0'].toInteger()
         id = props['rpython_cache_id']
+        useEffect = Object.get('window', 'React', 'useEffect').toFunction()
+        effect = Object.createClosure(use_effect, id.toRef(), JSON.fromFunction(mount) if step == 0 else JSON.fromFunction(update))
+        useEffect(effect.toRef())
+        cleanup = Object.createClosure(use_effect_cleanup, id.toRef())
+        useEffect(cleanup.toRef(), JSON.fromList([]))
         if step == 0:
+           #cleanup = Object.createClosure(use_effect_cleanup, id.toRef())
+           #useEffect(cleanup.toRef(), JSON.fromList([]))
            component = Component(children=Component.rpython_caches[id.toString()].children if id.type != 'undefined' else [], react_props=props)
            caches[id.toInteger()] = component
         else:
            caches[id.toInteger()].state_function.release()
         #if 'mount' in functions and 'update' in functions and 'unmount' in functions:
-        useEffect = Object.get('window', 'React', 'useEffect').toFunction()
-        effect = Object.createClosure(use_effect, id.toRef(), JSON.fromFunction(mount) if step == 0 else JSON.fromFunction(update))
         #effect = Object("function (effect, cleanup) {return function () {effect(%s)}}" % (id.toString())).call(JSON.fromFunction(mount) if step == 0 else JSON.fromFunction(update))
         #Object('window.React.useEffect').call(effect.toRef())
-        useEffect(effect.toRef())
-        if step == 0:
-           cleanup = Object.createClosure(use_effect_cleanup, id.toRef())
+        #if step == 0:
            #cleanup = Object("function (cleanup) {return function () {return function () {cleanup(%s)}}}" % (id.toString())).call(JSON.fromFunction(unmount))
            #Object('window.React.useEffect').call(cleanup.toRef(), JSON.fromList([]))
-           useEffect(cleanup.toRef())
+           #useEffect(cleanup.toRef())
         component = caches[id.toInteger()]
         component.state_function = function
         return component.render().entry()

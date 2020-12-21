@@ -1,5 +1,27 @@
 from javascript import JSON, Object, run_javascript
 
+object_getitem = Object.__getitem__
+object_call = Object.call
+
+def __getitem__(self, key):
+    if self.type in ['null', 'undefined']: return object_getitem(self, key)
+    value = object_getitem(self, key)
+    if value.type != 'undefined': return value
+    proxy = object_getitem(self, '_ReactNativeProxy_')
+    if proxy.type == 'undefined': return object_getitem(self, key)
+    get = object_getitem(proxy, 'get')
+    return object_call(get, key)
+
+def call(self, *args):
+    if self.type in ['null', 'undefined', 'function']: return object_call(self, *args)
+    proxy = object_getitem(self, '_ReactNativeProxy_')
+    if proxy.type == 'undefined': return object_call(self, *args)
+    call = object_getitem(proxy, 'call')
+    return object_call(call, *args)
+
+Object.__getitem__ = __getitem__
+Object.call = call
+
 #children_cache = {}
 object_cache = {}
 
