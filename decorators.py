@@ -32,7 +32,7 @@ def create_custom_component(Component, State):
               self.native_props = props or {}
               self.props = react_props
               self.state = State()
-              if self.react_props is None: self.rpython_args = Args()
+              if react_props is None: self.rpython_args = Args()
               #elif self.react_props['rpython_cache_id'].type != 'undefined':
               else: self.rpython_args = self.rpython_caches[self.react_props['rpython_cache_id'].toString()].args
           class_def.init_rpython_component  = init_rpython_component

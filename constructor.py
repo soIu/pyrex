@@ -8,7 +8,7 @@ def __getitem__(self, key):
     value = object_getitem(self, key)
     if value.type != 'undefined': return value
     proxy = object_getitem(self, '_ReactNativeProxy_')
-    if proxy.type == 'undefined': return object_getitem(self, key)
+    if proxy.type == 'undefined': return value #object_getitem(self, key)
     get = object_getitem(proxy, 'get')
     return object_call(get, key)
 
