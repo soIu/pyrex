@@ -82,7 +82,7 @@ def create_custom_component(Component, State):
         effect.call(id.toRef())
     @function
     def use_effect_cleanup(id):
-        return Object.createClosure(unmount, id.toRef())
+        return Object.createClosure(unmount, id)
     @function
     def entry(props):
         #variable = "rpython_react_component_count_" + str(custom_component_count)
@@ -92,7 +92,7 @@ def create_custom_component(Component, State):
         #run_javascript("!('%s' in global) && (global.%s = -1)" % (variable, variable))
         useState = Object.get('window', 'React', 'useState').toFunction()
         state = useState(JSON.fromInteger(0))
-        function = Object.createClosure(use_state, state['1'].toRef()).keep()
+        function = Object.createClosure(use_state, state['1']).keep()
         #object = Object("window.React.useState(function() {return {step: 0, id: ++global.%s}}).map(function (value, index, values) {return typeof value !== 'function' ? value : function () {return value({...values[0], step: values[0].step + 1})}})" % (variable))
         #state, function = object['0'], object['1'].keep() #toFunction()
         #step, id = state['step'].toInteger(), state['id']
@@ -102,12 +102,12 @@ def create_custom_component(Component, State):
         step = state['0'].toInteger()
         id = props['rpython_cache_id']
         useEffect = Object.get('window', 'React', 'useEffect').toFunction()
-        effect = Object.createClosure(use_effect, id.toRef(), JSON.fromFunction(mount) if step == 0 else JSON.fromFunction(update))
+        effect = Object.createClosure(use_effect, id, Object.fromFunction(mount) if step == 0 else Object.fromFunction(update))
         useEffect(effect.toRef())
-        cleanup = Object.createClosure(use_effect_cleanup, id.toRef())
+        cleanup = Object.createClosure(use_effect_cleanup, id)
         useEffect(cleanup.toRef(), JSON.fromList([]))
         if step == 0:
-           #cleanup = Object.createClosure(use_effect_cleanup, id.toRef())
+           #cleanup = Object.createClosure(use_effect_cleanup, id)
            #useEffect(cleanup.toRef(), JSON.fromList([]))
            component = Component(children=Component.rpython_caches[id.toString()].children if id.type != 'undefined' else [], react_props=props)
            caches[id.toInteger()] = component
