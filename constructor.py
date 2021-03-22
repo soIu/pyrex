@@ -101,3 +101,6 @@ class ReactComponent:
     def toRef(self):
         #if isinstance(self, ReactComponent): return self.render().toRef()
         return self.entry().toRef()
+
+    def toObject(self):
+        return self.entry()
