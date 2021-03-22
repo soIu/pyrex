@@ -33,13 +33,13 @@ def create_custom_component(Component, State):
               self.props = react_props
               self.state = State()
               if react_props is None: self.rpython_args = Args()
-              #elif self.react_props['rpython_cache_id'].type != 'undefined':
-              else: self.rpython_args = self.rpython_caches[self.react_props['rpython_cache_id'].toString()].args
+              #elif self.props['rpython_cache_id'].type != 'undefined':
+              else: self.rpython_args = self.rpython_caches[self.props['rpython_cache_id'].toString()].rpython_args
           class_def.init_rpython_component  = init_rpython_component
-          args = class_def.constructor.__code__.co_varnames
+          args = [arg for arg in class_def.constructor.__code__.co_varnames if arg != 'self']
           defaults = class_def.constructor.__defaults__
           namespace = {key: value for key,value in zip(args, defaults)}
-          indent = (' ' * 4) + '\n'
+          indent = '\n' + (' ' * 4)
           code = 'def __init__(self, children=None, props={}, react_props=None, ' + ', '.join(arg + '=' + arg for arg in args) + '):'
           code += indent + 'self.init_rpython_component(children=children, props=props, react_props=react_props)'
           code += indent + 'if react_props is None: ' + ', '.join('self.rpython_args.' + arg  for arg in args) + ' = ' + ', '.join(arg for arg in args)
@@ -92,7 +92,7 @@ def create_custom_component(Component, State):
         #run_javascript("!('%s' in global) && (global.%s = -1)" % (variable, variable))
         useState = Object.get('window', 'React', 'useState').toFunction()
         state = useState(JSON.fromInteger(0))
-        function = Object.createClosure(use_state, state['1']).keep()
+        function = Object.createClosure(use_state, state['1']) #.keep()
         #object = Object("window.React.useState(function() {return {step: 0, id: ++global.%s}}).map(function (value, index, values) {return typeof value !== 'function' ? value : function () {return value({...values[0], step: values[0].step + 1})}})" % (variable))
         #state, function = object['0'], object['1'].keep() #toFunction()
         #step, id = state['step'].toInteger(), state['id']
@@ -111,8 +111,10 @@ def create_custom_component(Component, State):
            #useEffect(cleanup.toRef(), JSON.fromList([]))
            component = Component(children=Component.rpython_caches[id.toString()].children if id.type != 'undefined' else [], react_props=props)
            caches[id.toInteger()] = component
+           component.state_function = function.keep()
         else:
-           caches[id.toInteger()].state_function.release()
+           old_function = caches[id.toInteger()].state_function
+           Object.get('global')[old_function.variable] = function.toRef()
         #if 'mount' in functions and 'update' in functions and 'unmount' in functions:
         #effect = Object("function (effect, cleanup) {return function () {effect(%s)}}" % (id.toString())).call(JSON.fromFunction(mount) if step == 0 else JSON.fromFunction(update))
         #Object('window.React.useEffect').call(effect.toRef())
@@ -121,7 +123,7 @@ def create_custom_component(Component, State):
            #Object('window.React.useEffect').call(cleanup.toRef(), JSON.fromList([]))
            #useEffect(cleanup.toRef())
         component = caches[id.toInteger()]
-        component.state_function = function
+        #component.state_function = function
         return component.render().entry()
     Component.entry_function = (entry,)
     Component.rpython_count = {'count': 0}

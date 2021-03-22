@@ -83,6 +83,8 @@ class ReactComponent:
             if self.component.startswith('RPYJSON:') and self.component.endswith(':RPYJSON'):
                path = JSON.parse_rpy_json(self.component)
                component = Object(path).keep()
+               if component.type in ['null', 'undefined']:
+                  print 'Trying to get component in path %s but the type is %s' % (path, component.type)
                self.component = component.toRef()
             if self.children is None or not self.children: return createElement.call(self.component, JSON.fromDict(self.native_props))
             return createElement.call(self.component, JSON.fromDict(self.native_props), fromChildren(self.children, cache=False))
