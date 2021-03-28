@@ -1,27 +1,5 @@
 from javascript import JSON, Object, run_javascript
 
-object_getitem = Object.__getitem__
-object_call = Object.call
-
-def __getitem__(self, key):
-    if self.type in ['null', 'undefined']: return object_getitem(self, key)
-    value = object_getitem(self, key)
-    if value.type != 'undefined': return value
-    proxy = object_getitem(self, '_ReactNativeProxy_')
-    if proxy.type == 'undefined': return value #object_getitem(self, key)
-    get = object_getitem(proxy, 'get')
-    return object_call(get, key)
-
-def call(self, *args):
-    if self.type in ['null', 'undefined', 'function']: return object_call(self, *args)
-    proxy = object_getitem(self, '_ReactNativeProxy_')
-    if proxy.type == 'undefined': return object_call(self, *args)
-    call = object_getitem(proxy, 'call')
-    return object_call(call, *args)
-
-Object.__getitem__ = __getitem__
-Object.call = call
-
 #children_cache = {}
 object_cache = {}
 
@@ -66,8 +44,8 @@ class ReactComponent:
     def unmount(self):
         return
 
-    def clean(self):
-        self.state_function.release()
+    #def clean(self):
+    #    self.state_function.release()
 
     def render(self):
         object = Object.fromString('This is the default RPython render text, override render method to get started')
@@ -86,15 +64,21 @@ class ReactComponent:
                if component.type in ['null', 'undefined']:
                   print 'Trying to get component in path %s but the type is %s' % (path, component.type)
                self.component = component.toRef()
+            #elif self.component.startswith('RPYJSOBJECT:') and self.component.endswith(':RPYJSOBJECT'):
+               #component = Object(self.component, safe_json=True)
+               #if component.type in ['null', 'undefined']:
+               #   print 'Trying to get component in path %s but the type is %s' % (self.component, component.type)
+               #self.component = component.toRef()
             if self.children is None or not self.children: return createElement.call(self.component, JSON.fromDict(self.native_props))
-            return createElement.call(self.component, JSON.fromDict(self.native_props), fromChildren(self.children, cache=False))
+            return createElement.call(self.component, JSON.fromDict(self.native_props), JSON.fromList([children.entry().toRef() for children in self.children if children is not None]) if len(self.children) > 1 else self.children[0].entry().toRef() if self.children[0] is not None else None) #fromChildren(self.children, cache=False))
         #assert self.entry_function[0] is not None
-        self.rpython_count['count'] += 1
-        id = str(self.rpython_count['count'])
+        #self.rpython_count['count'] += 1
+        #id = str(self.rpython_count['count'])
+        id = Object.get('window', 'Math', 'random').call().toString()
         self.rpython_caches[id] = self
         self.native_props['rpython_cache_id'] = id
         if self.children is None or not self.children: return createElement.call(JSON.fromFunction(self.entry_function[0]), JSON.fromDict(self.native_props))
-        return createElement.call(JSON.fromFunction(self.entry_function[0]), JSON.fromDict(self.native_props), fromChildren(self.children))
+        return createElement.call(JSON.fromFunction(self.entry_function[0]), JSON.fromDict(self.native_props), JSON.fromList([children.entry().toRef() for children in self.children if children is not None]) if len(self.children) > 1 else self.children[0].entry().toRef() if self.children[0] is not None else None) #fromChildren(self.children))
 
     def setState(self):
         #if self.state_function is None: return
