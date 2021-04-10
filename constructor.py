@@ -25,6 +25,7 @@ class ReactComponent:
     entry_function = (None,)
     component = None
     component_object = None
+    pure_component = False
     rpython_count = {'count': 0}
     rpython_caches = {}
 
@@ -77,6 +78,9 @@ class ReactComponent:
         id = Object.get('window', 'Math', 'random').call().toString()
         self.rpython_caches[id] = self
         self.native_props['rpython_cache_id'] = id
+        if self.pure_component:
+           self.props = Object.fromDict(self.native_props)
+           return self.render().entry()
         if self.children is None or not self.children: return createElement.call(JSON.fromFunction(self.entry_function[0]), JSON.fromDict(self.native_props))
         return createElement.call(JSON.fromFunction(self.entry_function[0]), JSON.fromDict(self.native_props), JSON.fromList([children.entry().toRef() for children in self.children if children is not None]) if len(self.children) > 1 else self.children[0].entry().toRef() if self.children[0] is not None else None) #fromChildren(self.children))
 

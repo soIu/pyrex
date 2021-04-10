@@ -20,7 +20,7 @@ def component_from_object(object):
 
 custom_component_count = 0
 
-def create_custom_component(Component, State, Props=None):
+def create_custom_component(Component, State, Props=None, Pure=False):
     global custom_component_count
     custom_component_count += 1
     custom_count = custom_component_count
@@ -199,6 +199,7 @@ def create_custom_component(Component, State, Props=None):
     Component.entry_function = (entry,)
     #Component.rpython_count = {'count': 0}
     #Component.rpython_caches = {}
+    Component.pure_component = Pure
     if Props:
        Component = ComponentDecorator(class_def=Props, path='null', component_entry=entry, component_class=Component)
        object_cache[Component] = Cache() #{}
@@ -214,7 +215,7 @@ def is_type(value, type):
     if isinstance(value, type): return True
     return False
 
-def Component(class_def=None, path=None, component_entry=None, component_class=None, State=None, Props=None):
+def Component(class_def=None, path=None, component_entry=None, component_class=None, State=None, Props=None, Pure=False):
     if State and class_def is None:
        def wrapper(class_def):
            if not issubclass(class_def, ReactComponent):
@@ -223,7 +224,7 @@ def Component(class_def=None, path=None, component_entry=None, component_class=N
               new_class = namespace[class_def.__name__]
               new_class.__dict__ = class_def.__dict__
               class_def = new_class
-           return create_custom_component(class_def, State, Props)
+           return create_custom_component(class_def, State, Props, Pure=Pure)
        return wrapper
     if class_def is None and path:
        def wrapper(class_def):
@@ -231,7 +232,7 @@ def Component(class_def=None, path=None, component_entry=None, component_class=N
        return wrapper
     if State is None and class_def and isinstance(class_def, (type, ClassType)) and issubclass(class_def, ReactComponent):
        class State: pass
-       return create_custom_component(class_def, State, Props)
+       return create_custom_component(class_def, State, Props, Pure=Pure)
     name = class_def.__name__ if not component_class else component_class.__name__
     props = {prop: getattr(class_def, prop) for prop in vars(class_def) if not prop.startswith('_')}
     indent = '\n' + (' ' * 4)
