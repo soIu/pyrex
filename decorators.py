@@ -171,8 +171,6 @@ def create_custom_component(Component, State, Props=None):
         useEffect(cleanup.toRef(), JSON.fromList([]))
         is_state_event = Object.get('Module', 'rpython_react_state_event').type not in ['undefined', 'null']
         component = Original (children=[component_from_object(children) for children in props['children'].toArray()] if props['children'].type == 'array' else [component_from_object(props['children'])] if props['children'].type == 'object' else [], react_props=props) if not is_state_event else object_cache[Component][id.toString()]
-        print component
-        print 'this key ' + props['rpython_cache_id'].toString()
         object_cache[Component][id.toString()] = component
         component.props = props
         if is_state_event:
