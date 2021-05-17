@@ -216,7 +216,7 @@ def is_type(value, type):
     return False
 
 def Component(class_def=None, path=None, component_entry=None, component_class=None, State=None, Props=None, Pure=False):
-    if State and class_def is None:
+    if (State or Props or Pure) and class_def is None:
        def wrapper(class_def):
            if not issubclass(class_def, ReactComponent):
               namespace = {'ReactRPythonComponent': ReactComponent}
@@ -224,6 +224,9 @@ def Component(class_def=None, path=None, component_entry=None, component_class=N
               new_class = namespace[class_def.__name__]
               new_class.__dict__ = class_def.__dict__
               class_def = new_class
+           if not State:
+              class State: pass
+              return create_custom_component(class_def, State, Props, Pure=Pure)
            return create_custom_component(class_def, State, Props, Pure=Pure)
        return wrapper
     if class_def is None and path:
