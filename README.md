@@ -1,2 +1,2 @@
 # Pyrex
-A React (Web and Native) renderer and bindings in RPython
+Statically compiled React bindings in RPython
