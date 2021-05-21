@@ -1,4 +1,4 @@
-from javascript import JSON, Object, run_javascript
+from javascript import JSON, Object, Error, run_javascript
 
 #children_cache = {}
 object_cache = {}
@@ -63,7 +63,7 @@ class ReactComponent:
                path = JSON.parse_rpy_json(self.component)
                component = Object(path).keep()
                if component.type in ['null', 'undefined']:
-                  print 'Trying to get component in path %s but the type is %s' % (path, component.type)
+                  Error('Trying to get component in path %s but the type is %s' % (path, component.type))
                self.component = component.toRef()
             #elif self.component.startswith('RPYJSOBJECT:') and self.component.endswith(':RPYJSOBJECT'):
                #component = Object(self.component, safe_json=True)

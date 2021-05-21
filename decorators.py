@@ -217,6 +217,8 @@ def is_type(value, type):
 
 def Component(class_def=None, path=None, component_entry=None, component_class=None, State=None, Props=None, Pure=False):
     if (State or Props or Pure) and class_def is None:
+       if not State:
+          class State: pass
        def wrapper(class_def):
            if not issubclass(class_def, ReactComponent):
               namespace = {'ReactRPythonComponent': ReactComponent}
@@ -224,9 +226,6 @@ def Component(class_def=None, path=None, component_entry=None, component_class=N
               new_class = namespace[class_def.__name__]
               new_class.__dict__ = class_def.__dict__
               class_def = new_class
-           if not State:
-              class State: pass
-              return create_custom_component(class_def, State, Props, Pure=Pure)
            return create_custom_component(class_def, State, Props, Pure=Pure)
        return wrapper
     if class_def is None and path:
@@ -242,6 +241,8 @@ def Component(class_def=None, path=None, component_entry=None, component_class=N
     json_props = ', '.join(["'{0}': {1} ".format(prop, '{0} if {0} is not None else "RPYJSON:null:RPYJSON"'.format(prop) if is_type(props[prop], types.str) else 'JSON.fromInt(%s)' % prop if is_type(props[prop], types.int) else 'JSON.fromFloat(%s)' % prop if is_type(props[prop], types.float) else 'JSON.fromBool(%s)' % prop if is_type(props[prop], types.bool) else 'JSON.fromList(%s)' % prop if is_type(props[prop], types.list) else 'JSON.fromTuple(%s)' % prop if is_type(props[prop], types.tuple) else prop + '.toRef()' if is_type(props[prop], Object) else 'JSON.fromFunction(%s)' % prop if is_type(props[prop], types.function) or is_type(props[prop], types.instancemethod) else 'JSON.fromDict(%s)' % prop if is_type(props[prop], types.dict) else 'None') for prop in props])
     code = 'def ' + name + '(children=None, props=None' + (' ,' if props else "") + ', '.join([prop + '=' + prop for prop in props]) + '):'
     code += indent + "rpython_props = {%s}" % (json_props)
+    #code += indent + "assert isinstance(children, list), 'The component first argument (children) should be a list of ReactComponent (use keyword argument to add verbosity)'"
+    #code += indent + "if not isinstance(props, dict): raise Exception('The component second argument (props) should be a dictionary (use keyword argument to add verbosity)')"
     code += indent + "if props is not None:\n"
     code += ('    ' * 4 * 2) + "for key in props:\n"
     code += ('    ' * 4 * 3) + "if key not in rpython_props or JSON.isFalse(rpython_props[key]): rpython_props[key] = props[key]"
