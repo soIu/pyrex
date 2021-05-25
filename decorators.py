@@ -200,7 +200,7 @@ def create_custom_component(Component, State, Props=None, Pure=False):
     #Component.rpython_count = {'count': 0}
     #Component.rpython_caches = {}
     Component.pure_component = Pure
-    if Props:
+    if Props and any(not prop.startswith('_') for prop in vars(Props)):
        Component = ComponentDecorator(class_def=Props, path='null', component_entry=entry, component_class=Component)
        object_cache[Component] = Cache() #{}
        return Component
