@@ -1,0 +1,27 @@
+{
+  "name": "pyrex",
+  "version": "1.0.0",
+  "description": "React bindings for RapydScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soIu/pyrex.git"
+  },
+  "keywords": [
+    "react",
+    "python",
+    "rapydscript",
+    "frontend",
+    "ui",
+    "component"
+  ],
+  "author": "Solu Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/soIu/pyrex/issues"
+  },
+  "homepage": "https://github.com/soIu/pyrex#readme"
+}
