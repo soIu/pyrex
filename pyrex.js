@@ -35,9 +35,19 @@ export function wrap (component) {
   return wrapper;
 }
 
+export function kwargs (module, *keywords) {
+  return keywords.map(keyword => module[keyword]);
+}
+
 export default function pyrex (...components) {
+  components = components.flat();
   if (components.length === 1) return wrap(components[0]);
   return components.map(wrap);
 }
 
 pyrex.wrap = wrap;
+pyrex.component = pyrex;
+
+component = pyrex;
+
+export default component;
