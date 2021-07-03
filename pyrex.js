@@ -15,7 +15,7 @@ export function wrap (component) {
     if (props === null || typeof props !== "object" || props [ρσ_kwargs_symbol] !== true) props = {};
     var children = Array.prototype.slice.call(arguments, 0);
     if (props !== null && typeof props === "object" && props [ρσ_kwargs_symbol] === true) children.pop();
-    if (props.children) children = props.children;
+    if (props.children) children.push(...props.children);
     return create_component(props, children);
   }
   function create_component(props, children) {
@@ -35,7 +35,7 @@ export function wrap (component) {
   return wrapper;
 }
 
-export function kwargs (module, *keywords) {
+export function kwargs (module, ...keywords) {
   return keywords.map(keyword => module[keyword]);
 }
 
