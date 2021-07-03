@@ -50,4 +50,4 @@ pyrex.component = pyrex;
 
 component = pyrex;
 
-export default component;
+export component;
