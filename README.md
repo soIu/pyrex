@@ -141,7 +141,7 @@ class Submenu:
         )
 ```
 
-# RapydScript version
+# Using for RapydScript or even on pure JS/TS (without JSX)
 There's a RapydScript version that our team use to develop React Native apps (React Native doesn't yet support WebAssembly). It uses a babel [plugin](https://github.com/rafi16jan/babel-plugin-rapydscript) to load RapydScript code in a project that use babel as the loader.
 
 ```python
@@ -169,4 +169,58 @@ def App():
     )
 
 module.exports = App
+```
+
+You can also use it from JS/TS without JSX, but it'll be more awkward
+
+```javascript
+//Bunch of importing things and other stuff...
+
+class App extends React.Component {
+  async stream() {
+    try {
+      if (!this.recorder) return;
+      if (this.recorder.state === 'inactive') this.recorder.start();
+      //return console.log(this.recorder);
+      await sleep(0);
+      const blob = await this.recorder.requestData();
+      /*if (!blob)*/ return this.stream();
+      /*console.log(blob);
+      socket.emit('stream', blob);
+      return this.stream();*/
+    }
+    catch (error) {
+      console.error(error);
+      return this.stream();
+    }
+  }
+  unmutePlayers() {
+    for (let user in this.state.users) this.state.users[user].ogvPlayer && (this.state.users[user].ogvPlayer.muted = this.state.unmute);
+  }
+  render () {
+    const style = this.state.width > this.state.height ? {maxWidth: Object.keys(this.state.users).length > 0 ? 'calc(80vw - 24px)' : '100vw'} : {height: 'calc(100vh - 75px)'};
+    if (!this.state.username) return div();
+    return (
+      div ({style: {display: 'flex'}},
+        div ({style: {width: '20vw', margin: '2px'}}, ...Object.keys(this.state.users).map((user) =>
+          div ({style: {}}, !this.state.users[user].Player ?
+            video ({onProgress, onError: (event) => socket.emit('restart', user) && (delete self.state.users[user]) && self.setState(self.state), onClick, style: {'width': '20vw'}, autoplay: true, muted: !this.state.unmute, src: this.state.users[user].url}) :
+            this.state.users[user].Player(),
+            p (this.state.users[user].name)
+          )), Object.keys(this.state.users).length > 0 &&
+          div ( //{style: {display: 'none'}},
+            input ({type: 'checkbox', name: 'mute', checked: !this.state.unmute, onClick: () => self.unmutePlayers() || self.setState({unmute: !this.state.unmute})}),
+            label ({for: 'mute'}, 'Mute')
+          )
+        ),
+        div ({style: {margin: '2px'}},
+          (this.recorder && this.recorder.video) ?
+          div ({ref: (ref) => ref && !ref.children.length && (this.recorder.video.onclick = onClick) && (this.recorder.video.onloadedmetadata = () => self.stream()) && ref.appendChild(this.recorder.video) && Object.keys(style).forEach(key => this.recorder.video.style[key] = style[key])}) :
+          video ({onClick, style, muted: true, ref: (ref) => ref && (!ref.srcObject) &&  (ref.srcObject = console.log(self) || self.state.stream) && (ref.onloadedmetadata = () => ref.play() && self.stream())}),
+          p (this.state.username)
+        )
+      )
+    )
+  }
+}
 ```
