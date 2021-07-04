@@ -181,13 +181,9 @@ class App extends React.Component {
     try {
       if (!this.recorder) return;
       if (this.recorder.state === 'inactive') this.recorder.start();
-      //return console.log(this.recorder);
       await sleep(0);
       const blob = await this.recorder.requestData();
-      /*if (!blob)*/ return this.stream();
-      /*console.log(blob);
-      socket.emit('stream', blob);
-      return this.stream();*/
+      return this.stream();
     }
     catch (error) {
       console.error(error);
