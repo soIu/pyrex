@@ -1,5 +1,18 @@
 const ρσ_kwargs_symbol = (typeof Symbol === "function") ? Symbol.for("kwargs-object") : "kwargs-object-Symbol-5d0927e5554349048cf0e3762a228256";
 
+function isJSON(object) {
+  if (typeof object === 'object' && object !== null) {
+    if (typeof Object.getPrototypeOf === 'function') {
+      const prototype = Object.getPrototypeOf(object);
+      return prototype === Object.prototype || prototype === null;
+    }
+    else {
+      return Object.prototype.toString.call(object) === '[object Object]';
+    }
+  }
+  return false;
+}
+
 export function wrap (component) {
   function plain_wrapper(props, ...children) {
     if (!isJSON(props) || props.constructor === undefined) {
@@ -48,6 +61,6 @@ export default function pyrex (...components) {
 pyrex.wrap = wrap;
 pyrex.component = pyrex;
 
-component = pyrex;
+const component = pyrex;
 
 export {component};
