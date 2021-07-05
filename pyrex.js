@@ -15,7 +15,7 @@ function isJSON(object) {
 
 export function wrap (component) {
   function plain_wrapper(props, ...children) {
-    if (!isJSON(props) || props.constructor === undefined) {
+    if ((window.Symbol && Symbol.for('react.element') === props['$$typeof']) || !isJSON(props) || props.constructor === undefined) {
       const new_children = !Array.isArray(props) ? [props] : props;
       if (!children.length) children = new_children;
       else children = new_children.concat(children);
