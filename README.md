@@ -142,7 +142,7 @@ class Submenu:
 ```
 
 # Using for RapydScript or even on pure JS/TS (without JSX)
-There's a RapydScript version that our team use to develop React Native apps (React Native doesn't yet support WebAssembly). It uses a babel [plugin](https://github.com/rafi16jan/babel-plugin-rapydscript) to load RapydScript code in a project that use babel as the loader.
+There's a RapydScript version that our team use to develop React Native apps. It uses a babel [plugin](https://github.com/rafi16jan/babel-plugin-rapydscript) to load RapydScript code in a project that use babel as the loader.
 
 ```python
 React = require('react')
