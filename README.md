@@ -1,5 +1,5 @@
 # Pyrex
-Statically compiled React bindings in RPython, or a loosely transpiled in RapydScript/Transcryprt
+Statically compiled React bindings in RPython, or a loosely transpiled in RapydScript/Transcrypt
 
 # Comparison
 Here is a few comparison with Flutter widgets and React Components (JSX):
