@@ -142,7 +142,7 @@ class Submenu:
 ```
 
 # Using for RapydScript/Transcrypt or even on pure JS/TS (without JSX)
-There's a RapydScript and Transcrypt version that our team use to develop React Native apps. Both uses babel plugins ([RapydScript](https://github.com/soIu/rapydscript-plugin)/[Transcrypt](https://github.com/soIu/transcrypt-plugin)) to load RapydScript code in a project that use babel as the loader.
+There's a RapydScript and Transcrypt version that our team use to develop React Native apps. Both uses babel plugins ([RapydScript](https://github.com/soIu/rapydscript-plugin)/[Transcrypt](https://github.com/soIu/transcrypt-plugin)) to load Python code in a project that use babel as the loader.
 
 ```python
 React = require('react')
