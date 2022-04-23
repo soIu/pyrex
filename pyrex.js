@@ -24,9 +24,16 @@ export function wrap (component) {
     return create_component(props, children);
   }
   function rapydscript_wrapper() {
+    var kwargs;
     var props = arguments[arguments.length-1];
+    if (props && props.hasOwnProperty('__kwargtrans__')) {
+      //if (props.children) kwargs_children = props.children;
+      //else ;
+      kwargs = props;
+    }
     if (props === null || typeof props !== "object" || props [ρσ_kwargs_symbol] !== true) props = {};
     var children = Array.prototype.slice.call(arguments, 0);
+    if (kwargs) props = kwargs;
     if (props !== null && typeof props === "object" && props [ρσ_kwargs_symbol] === true) children.pop();
     if (props.children) children.push(...props.children);
     return create_component(props, children);
@@ -42,7 +49,7 @@ export function wrap (component) {
     return require('react').createElement(component, {...props}, children);
   }
   function wrapper (...args) {
-    if (!args.find((arg) => arg && typeof arg === 'object' && arg[ρσ_kwargs_symbol] === true)) return plain_wrapper(...args);
+    if (!args.find((arg) => arg && typeof arg === 'object' && (arg[ρσ_kwargs_symbol] === true || arg.hasOwnProperty('__kwargtrans__')))) return plain_wrapper(...args);
     return rapydscript_wrapper(...args);
   }
   return wrapper;

@@ -1,10 +1,13 @@
 {
   "name": "pyrex",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "React bindings for RapydScript",
   "main": "pyrex.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "peerDependencies": {
+    "react": "*"
   },
   "repository": {
     "type": "git",
