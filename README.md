@@ -172,7 +172,7 @@ def App():
 def App():
     return (
         View (style=styles.container, children=[
-            Text ('Hello, this is from RapydScript!'),
+            Text ('Hello, this is from Transcrypt!'),
         ])
     )
 
