@@ -1,5 +1,5 @@
 # Pyrex
-Statically compiled React bindings in RPython, or a loosely transpiled in RapydScript
+Statically compiled React bindings in RPython, or a loosely transpiled in RapydScript/Transcryprt
 
 # Comparison
 Here is a few comparison with Flutter widgets and React Components (JSX):
@@ -141,8 +141,8 @@ class Submenu:
         )
 ```
 
-# Using for RapydScript or even on pure JS/TS (without JSX)
-There's a RapydScript version that our team use to develop React Native apps. It uses a babel [plugin](https://github.com/rafi16jan/babel-plugin-rapydscript) to load RapydScript code in a project that use babel as the loader.
+# Using for RapydScript/Transcrypt or even on pure JS/TS (without JSX)
+There's a RapydScript and Transcrypt version that our team use to develop React Native apps. Both uses babel plugins ([RapydScript](https://github.com/soIu/rapydscript-plugin)/[Transcrypt](https://github.com/soIu/transcrypt-plugin)) to load RapydScript code in a project that use babel as the loader.
 
 ```python
 React = require('react')
@@ -160,12 +160,20 @@ styles = StyleSheet.create({
     }
 })
 
+#RapydScript supports inverted order of kwargs and args
 def App():
     return (
         View (style=styles.container,
             Text ('Hello, this is from RapydScript!'),
-
         )
+    )
+    
+#Transcrypt version, closer to RPython
+def App():
+    return (
+        View (style=styles.container, children=[
+            Text ('Hello, this is from RapydScript!'),
+        ])
     )
 
 module.exports = App
