@@ -168,7 +168,7 @@ def App():
         )
     )
     
-#Transcrypt version, closer to RPython
+#Javascripthon and Transcrypt version, closer to RPython
 def App():
     return (
         View (style=styles.container, children=[
