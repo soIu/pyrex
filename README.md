@@ -1,5 +1,5 @@
 # Pyrex
-Statically compiled React bindings in RPython, or a loosely transpiled in RapydScript/Transcrypt
+Statically compiled React bindings in RPython, or a loosely transpiled in RapydScript/Javascripthon
 
 # Comparison
 Here is a few comparison with Flutter widgets and React Components (JSX):
@@ -141,8 +141,8 @@ class Submenu:
         )
 ```
 
-# Using for RapydScript/Transcrypt or even on pure JS/TS (without JSX)
-There's a RapydScript and Transcrypt version that our team use to develop React Native apps. Both uses babel plugins ([RapydScript](https://github.com/soIu/rapydscript-plugin)/[Transcrypt](https://github.com/soIu/transcrypt-plugin)) to load Python code in a project that use babel as the loader.
+# Using for RapydScript/Javascripthon or even on pure JS/TS (without JSX)
+There's a RapydScript and ~~Transcrypt~~ Javascripthon version that our team use to develop React Native apps. Both uses babel plugins ([RapydScript](https://github.com/soIu/rapydscript-plugin)/[Javascripthon](https://github.com/soIu/javascripthon-plugin)) to load Python code in a project that use babel as the loader.
 
 ```python
 React = require('react')
