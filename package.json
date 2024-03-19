@@ -1,6 +1,6 @@
 {
   "name": "pyrex",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "React bindings for RapydScript",
   "main": "pyrex.js",
   "scripts": {

@@ -13,7 +13,7 @@ function isJSON(object) {
   return false;
 }
 
-export function wrap (component) {
+function wrap (component) {
   function plain_wrapper(props, ...children) {
     if ((props && window.Symbol && Symbol.for('react.element') === props['$$typeof']) || !isJSON(props) || props.constructor === undefined) {
       const new_children = !Array.isArray(props) ? [props] : props;
@@ -45,8 +45,9 @@ export function wrap (component) {
         delete props[key];
       }
     }
-    if (!children.length) return require('react').createElement(component, {...props});
-    return require('react').createElement(component, {...props}, children);
+    const current_component = (component && typeof component === 'object' && component.default) ? component.default : component;
+    if (!children.length) return require('react').createElement(current_component, {...props});
+    return require('react').createElement(current_component, {...props}, children);
   }
   function wrapper (...args) {
     if (!args.find((arg) => arg && typeof arg === 'object' && (arg[ρσ_kwargs_symbol] === true || arg.hasOwnProperty('__kwargtrans__')))) return plain_wrapper(...args);
@@ -55,11 +56,11 @@ export function wrap (component) {
   return wrapper;
 }
 
-export function kwargs (module, ...keywords) {
-  return keywords.map(keyword => module[keyword]);
+function kwargs (module, ...keywords) {
+  return keywords.flat().map(keyword => module[keyword]);
 }
 
-export default function pyrex (...components) {
+function pyrex (...components) {
   components = components.flat();
   if (components.length === 1) return wrap(components[0]);
   return components.map(wrap);
@@ -67,7 +68,6 @@ export default function pyrex (...components) {
 
 pyrex.wrap = wrap;
 pyrex.component = pyrex;
+pyrex.kwargs = kwargs;
 
-const component = pyrex;
-
-export {component};
+module.exports = pyrex;
