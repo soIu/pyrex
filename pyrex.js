@@ -17,9 +17,11 @@ function wrap (component) {
   function plain_wrapper(props, ...children) {
     if ((props && window.Symbol && Symbol.for('react.element') === props['$$typeof']) || !isJSON(props) || props.constructor === undefined) {
       const new_children = !Array.isArray(props) ? [props] : props;
+      props = children.find((child) => !(child && window.Symbol && Symbol.for('react.element') === child['$$typeof']) && isJSON(child));
+      children = children.filter((child) => (child && window.Symbol && Symbol.for('react.element') === child['$$typeof']) || !isJSON(child) || child.constructor === undefined);
       if (!children.length) children = new_children;
       else children = new_children.concat(children);
-      props = {};
+      if (!props) props = {};
     }
     return create_component(props, children);
   }
